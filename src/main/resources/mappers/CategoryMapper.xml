@@ -21,6 +21,39 @@
     from mmall_category
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectGetCategory" resultMap="BaseResultMap" parameterType="integer">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_category
+    where parent_id = #{categoryId}
+  </select>
+
+  <select id="checkCategoryName" resultType="int" >
+    select
+    count(1)
+    from mmall_category
+    where parent_id = #{parentId}
+    and name = #{categoryName}
+  </select>
+  <select id="getDeepCategory" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    select
+    id
+    from mmall_category
+    where parent_id = (
+    select
+    parent_id
+    from mmall_category
+    where id = #{categoryId}
+    )
+  </select>
+
+  <select id="checkCategoryId" resultType="java.lang.Integer">
+    select
+    count(1)
+    from mmall_category
+    where id = #{categoryId}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from mmall_category
     where id = #{id,jdbcType=INTEGER}
@@ -30,8 +63,8 @@
       status, sort_order, create_time, 
       update_time)
     values (#{id,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
-      #{status,jdbcType=BIT}, #{sortOrder,jdbcType=INTEGER}, new(),
-      new())
+      #{status,jdbcType=BIT}, #{sortOrder,jdbcType=INTEGER}, now(),
+      now())
   </insert>
   <insert id="insertSelective" parameterType="com.mmall.pojo.Category" >
     insert into mmall_category
@@ -75,10 +108,10 @@
         #{sortOrder,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
-        new(),
+        now(),
       </if>
       <if test="updateTime != null" >
-        new(),
+        now(),
       </if>
     </trim>
   </insert>
@@ -101,7 +134,7 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        update_time = new(),
+        update_time = now(),
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -113,7 +146,14 @@
       status = #{status,jdbcType=BIT},
       sort_order = #{sortOrder,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = new()
+      update_time = now()
     where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateCategoryNameBycategoryId">
+    update mmall_category
+    set name = #{categoryName},
+    update_time = now()
+    where id = #{categoryId}
   </update>
 </mapper>

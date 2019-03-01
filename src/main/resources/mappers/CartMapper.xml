@@ -21,6 +21,28 @@
     from mmall_cart
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+    <select id="selectCartByUserId" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List"/>
+      from mmall_cart
+      where user_id = #{userId}
+    </select>
+  <select id="selectCartProductCheckedStatusByUserId" resultType="int" parameterType="int">
+    select
+    count(1)
+    from mmall_cart
+    where checked = 0 and user_id = #{userId}
+  </select>
+
+  <select id="selectCartByUserIdProductId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_cart
+    where user_id = #{userId}
+    and productId = #{productId}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from mmall_cart
     where id = #{id,jdbcType=INTEGER}
@@ -30,8 +52,8 @@
       quantity, checked, create_time, 
       update_time)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, 
-      #{quantity,jdbcType=INTEGER}, #{checked,jdbcType=INTEGER}, new(),
-      new())
+      #{quantity,jdbcType=INTEGER}, #{checked,jdbcType=INTEGER}, now(),
+      now())
   </insert>
   <insert id="insertSelective" parameterType="com.mmall.pojo.Cart" >
     insert into mmall_cart
@@ -75,10 +97,10 @@
         #{checked,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
-        new(),
+        now(),
       </if>
       <if test="updateTime != null" >
-        new(),
+        now(),
       </if>
     </trim>
   </insert>
@@ -101,7 +123,7 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        update_time = new(),
+        update_time = now(),
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -113,7 +135,7 @@
       quantity = #{quantity,jdbcType=INTEGER},
       checked = #{checked,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = new()
+      update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
