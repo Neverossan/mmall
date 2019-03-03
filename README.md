@@ -1,2 +1,0 @@
-# mmall
-mall learn
