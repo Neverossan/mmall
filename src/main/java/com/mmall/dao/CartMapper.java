@@ -14,6 +14,8 @@ public interface CartMapper {
 
     Cart selectByPrimaryKey(Integer id);
 
+    int deleteByUserIdProductIds(@Param("userId") Integer userId, @Param("productIdList") List<String> productIdList);
+
     List<Cart> selectCartByUserId(Integer userId);
 
     int updateByPrimaryKeySelective(Cart record);
@@ -23,4 +25,8 @@ public interface CartMapper {
     int selectCartProductCheckedStatusByUserId(Integer userId);
 
     Cart selectCartByUserIdProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
+
+    int updateOrUnSelect(@Param("userId") Integer userId, @Param("productId") Integer productId,@Param("checked") Integer checked);
+
+    int getCartProductCount(Integer userId);
 }
